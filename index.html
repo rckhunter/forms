@@ -22,7 +22,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: #05080f; }
 
 body {
   background: var(--bg);
@@ -290,6 +290,7 @@ body {
 input[type="text"],
 input[type="url"],
 input[type="number"],
+input[type="tel"],
 select,
 textarea {
   background: var(--surface2);
@@ -640,6 +641,14 @@ textarea {
           </div>
         </div>
 
+        <div class="field-row single">
+          <div class="field">
+            <label>WhatsApp</label>
+            <input type="tel" id="f-whatsapp" placeholder="Ex: (11) 99999-9999" oninput="markFilled(this)">
+            <div class="field-hint">Com DDD — pra gente te chamar pra marcar o teste</div>
+          </div>
+        </div>
+
         <div class="field-row">
           <div class="field">
             <label>Idade</label>
@@ -793,6 +802,7 @@ function submitForm() {
     nome: document.getElementById('f-name').value.trim() || '—',
     nick,
     discord: document.getElementById('f-discord').value.trim() || '—',
+    whatsapp: document.getElementById('f-whatsapp').value.trim() || '—',
     idade: document.getElementById('f-age').value.trim() || '—',
     cidade: document.getElementById('f-city').value.trim() || '—',
     elo: document.getElementById('f-elo').value || '—',
@@ -815,6 +825,7 @@ function submitForm() {
     `Nome: ${data.nome}`,
     `Nick: ${data.nick}`,
     `Discord: ${data.discord}`,
+    `WhatsApp: ${data.whatsapp}`,
     `Idade: ${data.idade}  |  Cidade: ${data.cidade}`,
     '',
     `Elo atual: ${data.elo}  |  Pico: ${data.pico}`,
@@ -840,6 +851,7 @@ function submitForm() {
         { name: '👤 Nome Real', value: data.nome, inline: true },
         { name: '🎮 Nick', value: data.nick, inline: true },
         { name: '💬 Discord', value: data.discord, inline: true },
+        { name: '📱 WhatsApp', value: data.whatsapp, inline: true },
         { name: '🎂 Idade', value: data.idade, inline: true },
         { name: '📍 Cidade', value: data.cidade, inline: true },
         { name: '🏆 Elo Atual', value: data.elo, inline: true },
