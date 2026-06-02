@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeZone — Formulário de Candidatura</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #05080f;
+  --surface: #090d1a;
+  --surface2: #0c1020;
+  --border: #161e35;
+  --border2: #1e2d50;
+  --blue: #1E90FF;
+  --cyan: #00D4FF;
+  --glow: rgba(0, 212, 255, 0.12);
+  --text: #b8c8e8;
+  --white: #eef2ff;
+  --muted: #3d4f70;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30,144,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,144,255,0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.bg-glow-top {
+  position: absolute;
+  top: -300px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 65%);
+}
+
+.bg-glow-bottom {
+  position: absolute;
+  bottom: -200px;
+  right: -100px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(30,144,255,0.05) 0%, transparent 65%);
+}
+
+/* Scan line effect */
+.bg-scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* ── LAYOUT ── */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px 80px;
+}
+
+/* ── HEADER STRIP ── */
+.top-strip {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0 0;
+  margin-bottom: 48px;
+  animation: fadeDown 0.8s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.org-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.org-name span { color: var(--cyan); }
+
+.doc-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  max-width: 580px;
+  margin-bottom: 52px;
+  animation: fadeDown 0.8s cubic-bezier(0.16,1,0.3,1) 0.05s both;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 5px 14px;
+  border: 1px solid var(--border2);
+  background: rgba(0,212,255,0.04);
+  border-radius: 2px;
+}
+
+.hero-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+
+.hero-eyebrow span {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(36px, 8vw, 58px);
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 0.92;
+  margin-bottom: 18px;
+}
+
+.hero h1 .accent {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--cyan);
+  text-stroke: 1px var(--cyan);
+}
+
+.hero p {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.hero p strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── FORM CARD ── */
+.form-card {
+  width: 100%;
+  max-width: 640px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+  position: relative;
+}
+
+/* Top accent line */
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--blue), transparent);
+}
+
+.form-inner {
+  padding: 36px 36px 40px;
+}
+
+/* ── SECTION HEADER ── */
+.form-section {
+  margin-bottom: 32px;
+}
+
+.form-section:last-of-type { margin-bottom: 0; }
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.section-label-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section-label span {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── FIELDS ── */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.field-row.single { grid-template-columns: 1fr; }
+.field-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.7;
+  font-style: italic;
+  margin-top: -4px;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="number"],
+select,
+textarea {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 11px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(0,212,255,0.4);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.06);
+  background: rgba(0,212,255,0.02);
+}
+
+input.filled, select.filled, textarea.filled {
+  border-color: rgba(30,144,255,0.25);
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d4f70' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+select option { background: #0c1020; }
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
+}
+
+/* Agent bubbles */
+.agent-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.agent-wrap input {
+  flex: 1;
+}
+
+/* ── DIVIDER ── */
+.form-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* ── SUBMIT ── */
+.submit-area {
+  padding: 0 36px 36px;
+}
+
+.submit-note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--blue);
+  border-radius: 2px;
+  background: rgba(30,144,255,0.03);
+}
+
+.submit-note strong { color: var(--text); font-weight: 500; }
+
+.submit-btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--blue);
+  border: none;
+  border-radius: 3px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.submit-btn:hover {
+  background: var(--cyan);
+  color: var(--bg);
+  box-shadow: 0 0 32px rgba(0,212,255,0.25);
+  transform: translateY(-1px);
+}
+
+.submit-btn:hover::after { opacity: 1; }
+.submit-btn:active { transform: translateY(0); }
+
+/* ── SUCCESS ── */
+.success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(5,8,15,0.96);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-overlay.show { display: flex; }
+
+.success-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 48px 40px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  animation: scaleIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.success-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+}
+
+.success-icon {
+  font-size: 44px;
+  margin-bottom: 20px;
+  display: block;
+  animation: bounceIn 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.success-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.success-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.success-nick {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 2px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+}
+
+/* Copy report */
+.report-area {
+  text-align: left;
+  background: #030508;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px;
+  font-size: 11px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: var(--text);
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  font-family: monospace;
+}
+
+.copy-btn {
+  width: 100%;
+  padding: 11px;
+  background: transparent;
+  border: 1px solid var(--blue);
+  border-radius: 3px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--blue);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.copy-btn:hover {
+  background: rgba(30,144,255,0.08);
+  color: var(--cyan);
+}
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 32px;
+  text-align: center;
+  animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+}
+
+.footer a {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.footer a:hover { color: var(--blue); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 520px) {
+  .form-inner { padding: 24px 20px 28px; }
+  .submit-area { padding: 0 20px 28px; }
+  .field-row { grid-template-columns: 1fr; }
+  .field-row.triple { grid-template-columns: 1fr; }
+  .agent-wrap { flex-direction: column; }
+  .success-card { padding: 36px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-grid"></div>
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+  <div class="bg-scan"></div>
+</div>
+
+<div class="page">
+
+  <!-- TOP STRIP -->
+  <div class="top-strip">
+    <div class="org-name">🦊 <span>Safe</span>Zone Esports</div>
+    <div class="doc-tag">Candidatura · Tryout</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      <span>Vagas Abertas — Academy & Prime</span>
+    </div>
+    <h1>SUAS<br><span class="accent">INFORMAÇÕES</span></h1>
+    <p>
+      Pra gente dar sequência e marcar seu teste, preencha os campos abaixo.
+      <strong>Assim que receber, a gente analisa e te retorna pra marcar o teste.</strong>
+      Qualquer dúvida é só chamar.
+    </p>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-card">
+    <div class="form-inner">
+
+      <!-- IDENTIFICAÇÃO -->
+      <div class="form-section">
+        <div class="section-label">
+          <span>Identificação</span>
+          <div class="section-label-line"></div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Nome Real</label>
+            <input type="text" id="f-name" placeholder="Ex: João Silva" oninput="markFilled(this)">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Nick Completo</label>
+            <input type="text" id="f-nick" placeholder="Ex: Kaiser#asyz" oninput="markFilled(this)">
+            <div class="field-hint">Com a #tag completa</div>
+          </div>
+          <div class="field">
+            <label>Discord</label>
+            <input type="text" id="f-discord" placeholder="Ex: kaisergoat3" oninput="markFilled(this)">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Idade</label>
+            <input type="number" id="f-age" placeholder="Ex: 18" min="10" max="40" oninput="markFilled(this)">
+          </div>
+          <div class="field">
+            <label>Cidade / Estado</label>
+            <input type="text" id="f-city" placeholder="Ex: São Paulo - SP" oninput="markFilled(this)">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- PERFIL COMPETITIVO -->
+      <div class="form-section">
+        <div class="section-label">
+          <span>Perfil Competitivo</span>
+          <div class="section-label-line"></div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Elo Atual</label>
+            <select id="f-elo" onchange="markFilled(this)">
+              <option value="">Selecionar</option>
+              <option>Ferro</option><option>Bronze</option><option>Prata</option>
+              <option>Ouro</option><option>Platina</option><option>Diamante</option>
+              <option>Ascendente</option><option>Imortal</option><option>Radiante</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Pico Histórico</label>
+            <select id="f-peak" onchange="markFilled(this)">
+              <option value="">Selecionar</option>
+              <option>Ferro</option><option>Bronze</option><option>Prata</option>
+              <option>Ouro</option><option>Platina</option><option>Diamante</option>
+              <option>Ascendente</option><option>Imortal</option><option>Radiante</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Função Principal</label>
+            <select id="f-role1" onchange="markFilled(this)">
+              <option value="">Selecionar</option>
+              <option>Duelista</option><option>Controlador</option>
+              <option>Iniciador</option><option>Sentinela</option><option>Flex</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Função Secundária</label>
+            <select id="f-role2" onchange="markFilled(this)">
+              <option value="">Selecionar</option>
+              <option>Duelista</option><option>Controlador</option>
+              <option>Iniciador</option><option>Sentinela</option><option>Flex</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Seus 3 Agentes Principais</label>
+            <div class="agent-wrap">
+              <input type="text" id="f-a1" placeholder="Agente 1" oninput="markFilled(this)">
+              <input type="text" id="f-a2" placeholder="Agente 2" oninput="markFilled(this)">
+              <input type="text" id="f-a3" placeholder="Agente 3" oninput="markFilled(this)">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Link do Tracker.gg</label>
+            <input type="url" id="f-tracker" placeholder="tracker.gg/valorant/profile/riot/..." oninput="markFilled(this)">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- DISPONIBILIDADE & HISTÓRICO -->
+      <div class="form-section">
+        <div class="section-label">
+          <span>Disponibilidade & Histórico</span>
+          <div class="section-label-line"></div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Disponibilidade de Horários</label>
+            <textarea id="f-avail" placeholder="Ex: Segunda a sexta das 19h em diante, sábado o dia todo..." oninput="markFilled(this)"></textarea>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Já jogou em algum time ou organização antes?</label>
+            <textarea id="f-history" placeholder="Se sim, conta um pouco sobre essa experiência. Se não, pode deixar em branco." style="min-height:72px;" oninput="markFilled(this)"></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-inner -->
+
+    <div class="submit-area">
+      <div class="submit-note">
+        <strong>Transparência antes do teste:</strong> caso seja aprovado, a entrada na divisão competitiva requer pagamento de matrícula e mensalidade. Academy: R$15 + R$15/mês. Prime: R$20 + R$20/mês.
+      </div>
+      <button class="submit-btn" onclick="submitForm()">ENVIAR CANDIDATURA →</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <a href="https://safezoneesports.com.br" target="_blank">safezoneesports.com.br</a>
+  </div>
+
+</div><!-- /page -->
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <span class="success-icon">🦊</span>
+    <div class="success-title">Candidatura Enviada</div>
+    <div class="success-nick" id="s-nick">—</div>
+    <div class="success-desc">
+      Recebemos suas informações. A gente analisa e te retorna em breve pra marcar o teste.<br>Qualquer dúvida é só chamar.
+    </div>
+    <div class="report-area" id="report-area"></div>
+    <button class="copy-btn" id="copy-btn" onclick="copyReport()">📋 COPIAR DADOS</button>
+  </div>
+</div>
+
+<script>
+function markFilled(el) {
+  el.classList.toggle('filled', el.value.trim().length > 0);
+}
+
+function submitForm() {
+  const nick = document.getElementById('f-nick').value.trim();
+  if (!nick) {
+    document.getElementById('f-nick').focus();
+    document.getElementById('f-nick').style.borderColor = 'rgba(255,61,107,0.5)';
+    setTimeout(() => document.getElementById('f-nick').style.borderColor = '', 2000);
+    return;
+  }
+
+  const data = {
+    nome: document.getElementById('f-name').value.trim() || '—',
+    nick,
+    discord: document.getElementById('f-discord').value.trim() || '—',
+    idade: document.getElementById('f-age').value.trim() || '—',
+    cidade: document.getElementById('f-city').value.trim() || '—',
+    elo: document.getElementById('f-elo').value || '—',
+    pico: document.getElementById('f-peak').value || '—',
+    funcao1: document.getElementById('f-role1').value || '—',
+    funcao2: document.getElementById('f-role2').value || '—',
+    agentes: [
+      document.getElementById('f-a1').value.trim(),
+      document.getElementById('f-a2').value.trim(),
+      document.getElementById('f-a3').value.trim()
+    ].filter(Boolean).join(', ') || '—',
+    tracker: document.getElementById('f-tracker').value.trim() || '—',
+    disponibilidade: document.getElementById('f-avail').value.trim() || '—',
+    historico: document.getElementById('f-history').value.trim() || 'Nenhum'
+  };
+
+  const report = [
+    '🦊 SAFEZONE — CANDIDATURA',
+    '━━━━━━━━━━━━━━━━━━━━━━━',
+    `Nome: ${data.nome}`,
+    `Nick: ${data.nick}`,
+    `Discord: ${data.discord}`,
+    `Idade: ${data.idade}  |  Cidade: ${data.cidade}`,
+    '',
+    `Elo atual: ${data.elo}  |  Pico: ${data.pico}`,
+    `Função: ${data.funcao1} / ${data.funcao2}`,
+    `Agentes: ${data.agentes}`,
+    `Tracker: ${data.tracker}`,
+    '',
+    `Disponibilidade: ${data.disponibilidade}`,
+    '',
+    `Histórico em times: ${data.historico}`,
+    '━━━━━━━━━━━━━━━━━━━━━━━',
+    'safezoneesports.com.br'
+  ].join('\n');
+
+  // Send to Discord webhook
+  const WEBHOOK = 'https://discord.com/api/webhooks/1502728361267691631/hZ6eOMrL0MpMvAeAIEZW7AsPx-aZxzB_QNn_-WHF2SMtV-R7fKMEkwkpMah24pP0GfbM';
+
+  const embed = {
+    embeds: [{
+      title: '🦊 Nova Candidatura — SafeZone',
+      color: 0x1E90FF,
+      fields: [
+        { name: '👤 Nome Real', value: data.nome, inline: true },
+        { name: '🎮 Nick', value: data.nick, inline: true },
+        { name: '💬 Discord', value: data.discord, inline: true },
+        { name: '🎂 Idade', value: data.idade, inline: true },
+        { name: '📍 Cidade', value: data.cidade, inline: true },
+        { name: '🏆 Elo Atual', value: data.elo, inline: true },
+        { name: '📈 Pico', value: data.pico, inline: true },
+        { name: '🃏 Função Principal', value: data.funcao1, inline: true },
+        { name: '🃏 Função Secundária', value: data.funcao2, inline: true },
+        { name: '🧩 Agentes', value: data.agentes, inline: false },
+        { name: '🔗 Tracker.gg', value: data.tracker, inline: false },
+        { name: '🕐 Disponibilidade', value: data.disponibilidade, inline: false },
+        { name: '📋 Histórico em Times', value: data.historico, inline: false },
+      ],
+      footer: { text: 'safezoneesports.com.br' },
+      timestamp: new Date().toISOString()
+    }]
+  };
+
+  fetch(WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(embed)
+  }).catch(() => {}); // silently fail if blocked
+
+  document.getElementById('s-nick').textContent = data.nick;
+  document.getElementById('report-area').textContent = report;
+  document.getElementById('success-overlay').classList.add('show');
+  window._reportText = report;
+}
+
+function copyReport() {
+  navigator.clipboard.writeText(window._reportText || '').then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✅ COPIADO!';
+    setTimeout(() => btn.textContent = '📋 COPIAR DADOS', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
